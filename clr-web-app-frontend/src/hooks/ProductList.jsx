@@ -1,6 +1,7 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Token } from '../../Token.jsx'; 
 
 function ProductList({ category }) {
   const [products, setProducts] = useState([]);
@@ -9,9 +10,23 @@ function ProductList({ category }) {
     getProducts();
   }, []);
 
+  const { accessToken } = useContext(Token);
+  console.log(accessToken)
+
+  const config = {
+    headers: {
+      'Authorization': 'Bearer '+accessToken,
+      'Content-type': "application/json"
+    }
+};
+
   const getProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/products');
+      const response = await axios.get(
+      'http://localhost:8080/api/v1/products/',
+      null,
+      config
+      );
       setProducts(response.data);
     } catch (error) {
       console.log('Error fetching products: ', error);
