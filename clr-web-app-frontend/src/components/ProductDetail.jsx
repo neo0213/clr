@@ -1,15 +1,24 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { Token } from '../../Token.jsx'; 
 
 function ProductDetail() {
   const { productName } = useParams();
   const [product, setProduct] = useState(null);
+  const { accessToken } = useContext(Token);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/products');
+        const response = await axios.get('http://localhost:8080/api/v1/products', {
+          headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${accessToken}`,
+              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
+          }
+        });
         const productDetails = response.data;
         const foundProduct = productDetails.find((p) => p.prodName === productName);
 

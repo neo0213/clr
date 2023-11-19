@@ -1,5 +1,6 @@
 // App.jsx
 import React, { useEffect, useContext } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
 import Navbar from './components/Navbar.jsx';
@@ -10,7 +11,7 @@ import { Token } from '../Token.jsx';
 
 
 function App() {
-  const { setAccessToken } = useContext(Token);
+  const { accessToken, setAccessToken } = useContext(Token);
 
   const {
     error,
@@ -22,11 +23,23 @@ function App() {
     logout,
   } = useAuth0(); 
 
+  const getAccessToken = async () => {
+    try {
+      const accessToken = await getAccessTokenSilently({
+        audience: 'https://dev-k5h56p77fu76lhif.us.auth0.com/api/v2/',
+        scope: 'read:current_user'
+      });
+      setAccessToken(accessToken);
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   if (error) {
     return <div>Oops... {error.message}</div>;
   }
 
-  if (isLoading) {
+  if (isLoading ) {
     return <div>Loading...</div>;
   }
 
@@ -34,20 +47,12 @@ function App() {
     return loginWithRedirect();
   }
 
-  useEffect(() => {
-    const getAccessToken = async () => {
-      try {
-        const accessToken = await getAccessTokenSilently({
-          audience: 'https://dev-k5h56p77fu76lhif.us.auth0.com/api/v2/',
-          scope: 'read:current_user'
-        });
-        setAccessToken(accessToken);
-      } catch (e) {
-        console.log(e.message);
-      }
-    };
+  if (accessToken == null){
     getAccessToken();
-  }, [getAccessTokenSilently]);
+    while (accessToken == null){
+      return <div>Loading...</div>
+    }
+  }
 
   const categories = ['Power Tools', 'PPE', 'Welding Machine'];
 

@@ -5,27 +5,23 @@ import { Token } from '../../Token.jsx';
 
 function ProductList({ category }) {
   const [products, setProducts] = useState([]);
+  const { accessToken } = useContext(Token);
 
   useEffect(() => {
     getProducts();
   }, []);
 
-  const { accessToken } = useContext(Token);
-  console.log(accessToken)
-
-  const config = {
-    headers: {
-      'Authorization': 'Bearer '+accessToken,
-      'Content-type': "application/json"
-    }
-};
-
   const getProducts = async () => {
     try {
       const response = await axios.get(
-      'http://localhost:8080/api/v1/products/',
-      null,
-      config
+      'http://localhost:8080/api/v1/products', {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
+        }
+      }
       );
       setProducts(response.data);
     } catch (error) {
@@ -43,7 +39,7 @@ function ProductList({ category }) {
           <Link to={`/product/${product.prodName}`} key={product.prodId} className="product-card text-black">
             <img className='img-card' src={product.img} alt={product.prodName} />
             <div className="mt-4">  
-              <p>{product.prodId}</p>
+              <p>{product._id}</p>
               <h4>{product.prodName}</h4>
               <p>{product.specs?.weight ? product.specs.weight : ('')}</p>
             </div>
