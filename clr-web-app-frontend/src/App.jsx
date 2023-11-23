@@ -1,17 +1,17 @@
 // App.jsx
 import React, { useEffect, useContext } from 'react';
-import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
 import Navbar from './components/Navbar.jsx';
 import ProductList from './hooks/ProductList';
 import ProductDetail from './components/ProductDetail';
-import { Token } from '../Token.jsx';
+import { Token } from './Token.jsx';
+import  configData from './config.json';
 
 
 
 function App() {
-  const { accessToken, setAccessToken } = useContext(Token);
+  const { setAccessToken } = useContext(Token);
 
   const {
     error,
@@ -23,35 +23,36 @@ function App() {
     logout,
   } = useAuth0(); 
 
-  const getAccessToken = async () => {
-    try {
-      const accessToken = await getAccessTokenSilently({
-        audience: 'https://dev-k5h56p77fu76lhif.us.auth0.com/api/v2/',
-        scope: 'read:current_user'
-      });
-      setAccessToken(accessToken);
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
+  useEffect(() => {
+    const getAccessToken = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently({
+          audience: configData.audience,
+          scope: configData.scope,
+        });
+        setAccessToken(accessToken);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    getAccessToken();
+  }, [getAccessTokenSilently]);
 
-  if (error) {
+  if ( error ) {
     return <div>Oops... {error.message}</div>;
   }
 
-  if (isLoading ) {
+  if ( isLoading ) {
     return <div>Loading...</div>;
   }
 
-  if (!isAuthenticated) {
+  if ( !isAuthenticated ) {
     return loginWithRedirect();
-  }
-
-  if (accessToken == null){
-    getAccessToken();
-    while (accessToken == null){
-      return <div>Loading...</div>
-    }
+  } else {
+    let str = user.sub;
+    // let userId = str.replace('|','-')
+    let userId = str.split('|').pop().trim();
+    console.log(userId)
   }
 
   const categories = ['Power Tools', 'PPE', 'Welding Machine'];

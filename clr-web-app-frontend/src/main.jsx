@@ -4,19 +4,20 @@ import App from './App.jsx'
 import 'bootstrap/dist/css/bootstrap.css'
 import './index.css'
 import Navbar from './components/Navbar.jsx'
+import configData from './config.json'
 
 import { Auth0Provider } from '@auth0/auth0-react'
-import { TokenProvider } from '../Token.jsx'
+import { TokenProvider } from './Token.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <TokenProvider>
     <Auth0Provider
-    domain="dev-k5h56p77fu76lhif.us.auth0.com"
-    clientId="zqRRIfEtTI3GOUeHzedGk8BQsN8hlx0c"
+    domain={configData.domain}
+    clientId={configData.clientId}
     authorizationParams={{
       redirect_uri: window.location.origin,
-      audience: "https://dev-k5h56p77fu76lhif.us.auth0.com/api/v2/",
-      scope: "read:current_user update:current_user_metadata"
+      audience: configData.audience,
+      scope: configData.scope
     }}
     >
       <React.StrictMode>

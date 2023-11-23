@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { Token } from '../../Token.jsx'; 
+import { Token } from '../Token.jsx'; 
 
 function ProductDetail() {
   const { productName } = useParams();

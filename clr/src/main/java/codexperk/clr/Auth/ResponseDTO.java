@@ -1,5 +1,8 @@
 package codexperk.clr.Auth;
 
+import lombok.Getter;
+
+@Getter
 public class ResponseDTO {
 
     private String message;
@@ -7,10 +10,6 @@ public class ResponseDTO {
     public ResponseDTO(String message) {
         super();
         this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public void setMessage(String message) {

@@ -1,0 +1,6 @@
+{
+    "domain": "dev-k5h56p77fu76lhif.us.auth0.com",
+    "clientId": "zqRRIfEtTI3GOUeHzedGk8BQsN8hlx0c",
+    "audience": "https://dev-k5h56p77fu76lhif.us.auth0.com/api/v2/",
+    "scope": "read:current_user"
+}

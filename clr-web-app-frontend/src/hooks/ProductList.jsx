@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Token } from '../../Token.jsx'; 
+import { Token } from '../Token.jsx'; 
 
 function ProductList({ category }) {
   const [products, setProducts] = useState([]);
