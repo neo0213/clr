@@ -36,7 +36,7 @@ function ProductList({ category }) {
       <h2 className="cat-label mt-5 mb-4">{category}</h2>
       <div className="container-product scroll">
         {filteredProducts.map((product) => (
-          <Link to={`/product/${product.prodName}`} key={product.prodId} className="product-card text-black">
+          <Link to={`/product/${product.prodName}`} key={product.id} className="product-card text-black">
             <img className='img-card' src={product.img} alt={product.prodName} />
             <div className="mt-4">  
               <p>{product.id}</p>
