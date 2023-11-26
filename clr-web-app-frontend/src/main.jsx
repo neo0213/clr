@@ -1,37 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import { BrowserRouter } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import './index.css'
-import Navbar from './components/Navbar.jsx'
-import configData from './config.json'
 
+// Components
+import App from './App.jsx'
+import './index.css'
+
+// Authentication
 import { Auth0Provider } from '@auth0/auth0-react'
 import { TokenProvider } from './Token.jsx'
-import ProductDetail from './components/ProductDetail.jsx';
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: 
-    <>
-      <Navbar />
-      <App />
-    </>,
-  },
-  {
-    path: "/product/:productName",
-    element: 
-    <>
-      <Navbar />
-      <ProductDetail />
-    </>,
-  },
-])
+import configData from './config.json'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <TokenProvider>
@@ -45,7 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     }}
     >
       <React.StrictMode>
-        <RouterProvider router={router}/>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </React.StrictMode>
     </Auth0Provider>
   </TokenProvider>
