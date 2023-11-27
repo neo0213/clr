@@ -1,12 +1,8 @@
 package codexperk.clr.Cart;
 
+import codexperk.clr.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -14,12 +10,8 @@ import java.util.Optional;
 public class CartController {
     @Autowired
     private CartService cartService;
-    @GetMapping
-    public ResponseEntity<List<Cart>> getAllCarts(){
-        return new ResponseEntity<List<Cart>>(cartService.allCart(),HttpStatus.OK);
-    }
-    @GetMapping("/{userId}")
-    public ResponseEntity<Optional<Cart>> getCart(@PathVariable String userId){
-        return new ResponseEntity<Optional<Cart>>(cartService.cart(userId), HttpStatus.OK);
+    @PostMapping("/{userId}")
+    public User updateCart(@PathVariable String userId, @RequestBody CartUpdateRequest cartUpdateRequest) {
+        return cartService.updateCart(userId, cartUpdateRequest);
     }
 }
