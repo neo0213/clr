@@ -17,9 +17,7 @@ function Navbar() {
             <a href="/">
                 <img src="/src\assets/A.png" className="user" alt="user" width="65"/>
             </a>
-            <a href="/">
-                <img src="/src\assets/Cart.png" className="cart" alt="cart" width="40"/>
-            </a>
+
 
             <div className="search-bar-container">
                 <SearchBar setResults={setResults} />
