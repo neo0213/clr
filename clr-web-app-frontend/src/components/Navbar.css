@@ -24,8 +24,7 @@ nav {
 }
 
 .title,
-.user,
-.cart {
+.user {
   background-size: contain;
   background-repeat: no-repeat;
   position: fixed;
@@ -38,9 +37,6 @@ nav {
 }
 
 .user {
-  right: 20px; /* Adjust the position of the user image */
+  right: 20px;
 }
 
-.cart {
-  right: 150px;
-}
