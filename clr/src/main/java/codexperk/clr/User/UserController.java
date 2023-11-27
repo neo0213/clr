@@ -13,7 +13,12 @@ import java.util.Optional;
 @RequestMapping("/api/v1/user")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUser(){
@@ -22,6 +27,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable String userId){
         return new ResponseEntity<User>(userService.user(userId), HttpStatus.OK);
+    }
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User savedUser = userService.saveUser(user);
+        return ResponseEntity.ok(savedUser);
     }
 
 }
