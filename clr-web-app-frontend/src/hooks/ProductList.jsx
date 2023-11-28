@@ -17,14 +17,7 @@ function ProductList({ category }) {
   const getProducts = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:8080/api/v1/products', {
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${accessToken}`,
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
-        }
-      }
+        'http://localhost:8080/api/v1/products'
       );
       setProducts(response.data);
       setLoading(false);
@@ -58,8 +51,7 @@ function ProductList({ category }) {
               <img className='img-card' src={product.img} alt={product.prodName} />
               <div className="mt-4">
                 <h4>{product.prodName}</h4>
-                <p>{product.specs?.weight ? product.specs.weight : ('')}</p>
-              </div>
+                </div>
             </Link>
           ))
         )}

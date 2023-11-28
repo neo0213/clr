@@ -1,27 +1,22 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { Token } from '../Token.jsx'; 
+import { Token } from '../Token'; 
 import { Toast } from 'react-bootstrap';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function ProductDetail({ userId }) {
   const { productName } = useParams();
   const [product, setProduct] = useState(null);
   const [showToast, setShowToast] = useState(false);  
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { accessToken } = useContext(Token);
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  let { accessToken } = useContext(Token);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/products', {
-          headers: {
-              "Content-Type": "application/json",
-              'Authorization': `Bearer ${accessToken}`,
-              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-              "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
-          }
-        });
+        const response = await axios.get('http://localhost:8080/api/v1/products');
         const productDetails = response.data;
         const foundProduct = productDetails.find((p) => p.prodName === productName);
 
@@ -39,25 +34,30 @@ function ProductDetail({ userId }) {
   }, [productName]);
 
   const handleAddToCart = async () => {
-
-    try {
-      setIsAddingToCart(true); // Set the button to disabled
-
-      await axios.post(`http://localhost:8080/api/v1/cart/${userId}`, {
-        productsToAdd: [product.id]
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      });
-
-      setShowToast(true);
-    } catch (error) {
-      console.log('Error adding to cart: ', error);
-    } finally {
-      setIsAddingToCart(false); // Reset the button to enabled
+    if ( isAuthenticated ){
+      try {
+        setIsAddingToCart(true); // Set the button to disabled
+        console.log(userId);
+        console.log(accessToken);
+        await axios.post(`http://localhost:8080/api/v1/cart/${userId}`, {
+          productsToAdd: [product.id]
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
+          }
+        });
+  
+        setShowToast(true);
+      } catch (error) {
+        console.log('Error adding to cart: ', error);
+      } finally {
+        setIsAddingToCart(false); // Reset the button to enabled
+      }
+    } else {
+      return loginWithRedirect();
     }
+
   
   };
 
@@ -76,7 +76,7 @@ function ProductDetail({ userId }) {
               {product.specs
                 ? Object.entries(product.specs).map(([key, value]) => (
                     <li key={key} className='py-1'>
-                      <strong className='text-uppercase'>{key}:</strong> {value}
+                      <strong className='text-uppercase'>{key.replace(/([A-Z])/g, " $1")}:</strong> {value}
                     </li>
                   ))
                 : 'No specifications available'}
