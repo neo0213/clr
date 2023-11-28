@@ -1,31 +1,39 @@
-import React from "react";
+// Navbar.jsx
+import React from 'react';
+import './Navbar.css';
+import { SearchBar } from "./Navbar/SearchBar";
+import { SearchResultsList } from "./Navbar/SearchResultsList";
+import UserIcon from '../assets/User.png';
+import ClrLogo from '../assets/Clr.png';
 
 function Navbar() {
+  const [results, setResults] = React.useState([]);
 
+  const handleUserIconClick = () => {
+    // Your existing logic for user icon click
+  };
 
-    return (
-        <>
-        <div className="container d-flex justify-content-between align-items-center">
+  const handleCartClick = () => {
+    // Your existing logic for cart click
+  };
 
-             <a href="/" className="h1">Clr</a>
-             <div class="search-container">
-                <input className="p-3 search-bar" type="text" placeholder="Search for an item" />
-                <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                <path d="M21 21l-6 -6"></path>
-                </svg></span>
-            </div>
-            <div className="d-flex">
-                <a href="/cart"><img className="me-4" width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/shopping-cart--v1.png" alt="shopping-cart--v1"/></a>
-                <div>Profile</div>
-            </div>
-
+  return (
+    <div className="Navbar">
+      <nav>
+        <a href="/" onClick={handleUserIconClick}>
+          <img src={ClrLogo} className="title" alt="title" width="70" />
+        </a>
+        <a href="/" onClick={handleUserIconClick}>
+          <img src={UserIcon} className="user" alt="user" width="65" />
+        </a>
+        
+        <div className="search-bar-container">
+          <SearchBar setResults={setResults} />
+          {results && results.length > 0 && <SearchResultsList results={results} />}
         </div>
-
-        </>
-    );
-
+      </nav>
+    </div>
+  );
 }
 
-export default Navbar
+export default Navbar;
