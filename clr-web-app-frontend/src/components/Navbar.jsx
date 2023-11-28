@@ -10,11 +10,11 @@ function Navbar() {
   const [results, setResults] = React.useState([]);
 
   const handleUserIconClick = () => {
-    // Your existing logic for user icon click
+    
   };
 
   const handleCartClick = () => {
-    // Your existing logic for cart click
+   
   };
 
   return (
