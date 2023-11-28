@@ -2,10 +2,13 @@ import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Token } from '../Token.jsx'; 
+import { Toast } from 'react-bootstrap';
 
-function ProductDetail() {
+function ProductDetail({ userId }) {
   const { productName } = useParams();
   const [product, setProduct] = useState(null);
+  const [showToast, setShowToast] = useState(false);  
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const { accessToken } = useContext(Token);
 
   useEffect(() => {
@@ -35,6 +38,29 @@ function ProductDetail() {
     fetchProductDetails();
   }, [productName]);
 
+  const handleAddToCart = async () => {
+
+    try {
+      setIsAddingToCart(true); // Set the button to disabled
+
+      await axios.post(`http://localhost:8080/api/v1/cart/${userId}`, {
+        productsToAdd: [product.id]
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      });
+
+      setShowToast(true);
+    } catch (error) {
+      console.log('Error adding to cart: ', error);
+    } finally {
+      setIsAddingToCart(false); // Reset the button to enabled
+    }
+  
+  };
+
   return (
     <div>
       {product ? (
@@ -57,16 +83,31 @@ function ProductDetail() {
             </ul>
 
             <div className='d-flex flex-row'>
-              <button className="btn btn-light req-btn rounded me-2 border border-black border-2">Add to cart</button>
+              <button className="btn btn-light req-btn rounded me-2 border border-black border-2" onClick={handleAddToCart} disabled={isAddingToCart}>Add to cart</button>
               <button className="btn btn-primary chat-prod-btn rounded">Chat with us</button>
             </div>
             </div>
 
           </div>
+          
+          <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed bottom-0 end-0 m-3">
 
+            <Toast.Header>
+              <strong class="me-auto">CLR</strong>
+              <small>1 sec ago</small>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </Toast.Header>
+            <Toast.Body>
+              <div className='text-start'>Product Added to Cart </div>
+            </Toast.Body>
+
+
+          </Toast>
         </>
       ) : (
-        <p>Loading...</p>
+        <div class="spinner-border mt-5" style={{width: 8 + 'rem', height: 8 + 'rem'}} role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
       )}
     </div>
   );

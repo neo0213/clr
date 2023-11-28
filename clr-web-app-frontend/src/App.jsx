@@ -6,12 +6,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Navbar from './components/Navbar.jsx';
 import ProductList from './hooks/ProductList';
 import ProductDetail from './components/ProductDetail';
+import Cart from './components/cart.jsx';
 import { Token } from './Token.jsx';
 import  configData from './config.json';
 
 
 
 function App() {
+  let userId;
   const { accessToken , setAccessToken } = useContext(Token); // Initialize the accessToken Context to be used as a pseudo-global variable
 
   const {
@@ -44,13 +46,15 @@ function App() {
   }
 
   if ( isLoading ) {
-    return <div>Loading...</div>;
+    return <div class="spinner-border mt-5" style={{width: 8 + 'rem', height: 8 + 'rem'}} role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>;
   }
 
   if ( !isAuthenticated ) {
     return loginWithRedirect();
   } else {
-    const userId = (user.sub).split('|').pop().trim(); // This is how to get the "clean" userId from auth0
+    userId = (user.sub).split('|').pop().trim(); // This is how to get the "clean" userId from auth0
     try {
       axios.post('http://localhost:8080/api/v1/user', { // This block of code is for saving the userId on the database if its not there yet
         "userId" : userId
@@ -67,6 +71,7 @@ function App() {
     }
   }
 
+
   const categories = ['Power Tools', 'PPE', 'Welding Machine'];
 
   return (
@@ -75,10 +80,11 @@ function App() {
       <div>
         <Routes>
           <Route  path="/" element={categories.map((category) => (
-        <ProductList key={category} category={category}/>))} />
+        <ProductList key={category} category={category} userId={userId}/> ))} />
           
 
-          <Route path="/product/:productName" element={<ProductDetail />} />
+          <Route path="/product/:productName" element={<ProductDetail userId={userId}/>} />
+          <Route path='/cart' element={<Cart userId={userId}/>}/>
         </Routes>
       </div>
     </Router>

@@ -16,7 +16,11 @@ function Navbar() {
                 <path d="M21 21l-6 -6"></path>
                 </svg></span>
             </div>
-             <div>Profile</div>
+            <div className="d-flex">
+                <a href="/cart"><img className="me-4" width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/shopping-cart--v1.png" alt="shopping-cart--v1"/></a>
+                <div>Profile</div>
+            </div>
+
         </div>
 
         </>

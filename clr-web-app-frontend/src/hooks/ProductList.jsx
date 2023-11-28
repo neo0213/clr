@@ -39,7 +39,6 @@ function ProductList({ category }) {
           <Link to={`/product/${product.prodName}`} key={product.prodId} className="product-card text-black">
             <img className='img-card' src={product.img} alt={product.prodName} />
             <div className="mt-4">  
-              <p>{product.id}</p>
               <h4>{product.prodName}</h4>
               <p>{product.specs?.weight ? product.specs.weight : ('')}</p>
             </div>
