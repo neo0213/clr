@@ -1,10 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Token } from '../Token.jsx'; 
+import Skeleton from 'react-loading-skeleton';
+import { Token } from '../Token.jsx';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function ProductList({ category }) {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { accessToken } = useContext(Token);
 
   useEffect(() => {
@@ -14,16 +17,17 @@ function ProductList({ category }) {
   const getProducts = async () => {
     try {
       const response = await axios.get(
-      'http://localhost:8080/api/v1/products', {
+        'http://localhost:8080/api/v1/products', {
         headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${accessToken}`,
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${accessToken}`,
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
         }
       }
       );
       setProducts(response.data);
+      setLoading(false);
     } catch (error) {
       console.log('Error fetching products: ', error);
     }
@@ -35,15 +39,30 @@ function ProductList({ category }) {
     <>
       <h2 className="cat-label mt-5 mb-4">{category}</h2>
       <div className="container-product scroll">
-        {filteredProducts.map((product) => (
-          <Link to={`/product/${product.prodName}`} key={product.prodId} className="product-card text-black">
-            <img className='img-card' src={product.img} alt={product.prodName} />
-            <div className="mt-4">  
-              <h4>{product.prodName}</h4>
-              <p>{product.specs?.weight ? product.specs.weight : ('')}</p>
+        {
+        loading ? (
+          // Display 5 skeleton loaders
+          Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="product-card text-black">
+              <Skeleton height={200} width={200} />
+              <div className="mt-4">
+                <Skeleton height={20} width={150} />
+                <Skeleton height={12} width={100} />
+              </div>
             </div>
-          </Link>
-        ))}
+          ))
+        ) : (
+          // Display actual products after data is fetched
+          filteredProducts.map((product) => (
+            <Link to={`/product/${product.prodName}`} key={product.prodId} className="product-card text-black">
+              <img className='img-card' src={product.img} alt={product.prodName} />
+              <div className="mt-4">
+                <h4>{product.prodName}</h4>
+                <p>{product.specs?.weight ? product.specs.weight : ('')}</p>
+              </div>
+            </Link>
+          ))
+        )}
       </div>
     </>
   );

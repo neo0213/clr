@@ -49,7 +49,7 @@ function Cart({ userId }) {
       <h1 className='text-start mt-5'>My Cart</h1>
       <div className='list-group mt-4'>
         {products.map((product) => (
-          <div className='list-group-item d-flex flex-start align-items-center' key={product.id}>
+          <a href={product.prodName} className='list-group-item list-group-item-action d-flex flex-start align-items-center' key={product.id}>
             <img className='me-5' src={product.img} alt={product.prodName} style={{ maxWidth: '100px' }} />
             <span className=''>{product.prodName}</span>
             <button
@@ -58,7 +58,7 @@ function Cart({ userId }) {
             >
               <img width="15" height="15" src="https://img.icons8.com/ios-glyphs/30/FFFFFF/filled-trash.png" alt="filled-trash"/>
             </button>
-          </div>
+          </a>
         ))}
       </div>
     </>
