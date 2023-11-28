@@ -1,0 +1,60 @@
+.Navbar {
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 40%;
+  right: 0;
+  align-items: center;
+  justify-content: space-around;
+  background-color: rgba(236, 236, 236, 0);
+  padding: 10px;
+}
+
+.search-bar-container {
+  width: 30%;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.title,
+.user,
+.cart {
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: fixed;
+  z-index: 1;
+  top: 10px;
+}
+
+.title {
+  left: 15px;
+}
+
+.user {
+  right: 15px;
+}
+
+.cart {
+  right: 120px;
+}
+
+
+.login-button {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  font-size: 15px;
+  background-color: #3498db; /* Change the background color as needed */
+  color: #fff; /* Change the text color as needed */
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
