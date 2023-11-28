@@ -8,6 +8,7 @@ import Cart from './components/cart.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Token } from './Token.jsx';
 import  configData from './config.json';
+import Message from './components/Message.jsx';
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="/product/:productName" element={<ProductDetail userId={userId}/>} />
           <Route path='/cart' element={<Cart userId={userId}/>}/>
         </Routes>
+        <Message userId={userId}/>
       </div>
     </Router>
     </>
