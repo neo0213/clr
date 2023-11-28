@@ -1,10 +1,71 @@
-import React from "react";
+// Navbar.jsx
+import { useState } from 'react';
+import './Navbar.css';
+import { SearchBar } from "./Navbar/SearchBar";
+import { SearchResultsList } from "./Navbar/SearchResultsList";
+import CartImage from '../assets/Cart.png';
+import UserIcon from '../assets/User.png';
 
 function Navbar() {
+    const [results, setResults] = useState([]);
+    const [isLoggedIn, setLoggedIn] = useState(false);
+  
+    const handleLogin = () => {
 
+      setLoggedIn(!isLoggedIn);
+    };
+  
+    const handleUserIconClick = () => {
+      if (isLoggedIn) {
 
+        const confirmLogout = window.confirm("Are you sure you want to log out?");
+        if (confirmLogout) {
+          setLoggedIn(false);
+        }
+      } else {
+
+      }
+    };
+  
+    const handleCartClick = () => {
+
+      if (!isLoggedIn) {
+
+      }
+    };
+  
     return (
-        <>
+      <div className="Navbar">
+        <nav>
+          <a href="/">
+            <img src="./src\assets/Clr.png" className="title" alt="title" width="70" />
+          </a>
+          {isLoggedIn ? (
+            <>
+              <a href="/" onClick={handleUserIconClick}>
+                <img src={UserIcon} className="user" alt="user" width="65" />
+              </a>
+              <a href="/" onClick={handleCartClick}>
+                <img src={CartImage} className="cart" alt="cart" width="65" />
+              </a>
+            </>
+          ) : (
+            <button className="login-button" onClick={handleLogin}>
+              Login
+            </button>
+          )}
+  
+          <div className="search-bar-container">
+            <SearchBar setResults={setResults} />
+            {results && results.length > 0 && <SearchResultsList results={results} />}
+          </div>
+        </nav>
+      </div>
+    );
+  }
+//Old Navbar code
+/*
+       <>
         <div className="container d-flex justify-content-between align-items-center">
 
              <a href="/" className="h1">Clr</a>
@@ -20,8 +81,6 @@ function Navbar() {
         </div>
 
         </>
-    );
-
-}
-
-export default Navbar
+*/
+  
+  export default Navbar;
