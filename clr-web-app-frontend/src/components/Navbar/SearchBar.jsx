@@ -8,7 +8,7 @@ export const SearchBar = ({ setResults }) => {
   const fetchData = (value) => {
 
     //put the link of the api here/backend!!!
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch("http://localhost:8080/api/v1/products/")
       .then((response) => response.json())
       .then((json) => {
         const results = json.filter((user) => {
