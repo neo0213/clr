@@ -12,5 +12,22 @@
     display: none !important;
   }
   .sendbird-conversation{
-    height: 30vh;
+    height: 60vh;
+    width: 400px;
   }
+
+
+  .sendbird-conversation__messages .sendbird-conversation__messages-padding {
+    overflow-x: hidden !important;
+  }
+
+  .Message {
+    height: 30px !important;
+    position: fixed !important;
+    bottom: 30px;
+    right: 30px;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+}

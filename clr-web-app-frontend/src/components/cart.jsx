@@ -4,10 +4,20 @@ import { useParams } from 'react-router-dom';
 import { Token } from '../Token.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
 import  configData from '../config.json';
+import Message from './Message.jsx';
+
 
 function Cart({ userId }) {
   const [products, setProducts] = useState([]);
   let { accessToken, setAccessToken } = useContext(Token);
+  const [quoteMessage, setQuoteMessage] = useState("");
+
+  function openMessageModal(message) {
+    setQuoteMessage(message);
+    setIsOpen(true);
+  }
+
+  
   const {
     error,
     isLoading,
@@ -88,6 +98,24 @@ function Cart({ userId }) {
     }
   };
 
+  let productList = [];
+  let concatenatedProductNames;
+  const sendQuote = async () => {
+    let productList = [];
+    let concatenatedProductNames;
+  
+    if (products && Array.isArray(products)) {
+      products.forEach((product) => {
+        productList.push(product.prodName);
+      });
+      concatenatedProductNames = productList.join(' ');
+    }
+  
+    openMessageModal(concatenatedProductNames);
+  };
+  
+  
+
   return (
     <>
       <h1 className='text-start mt-5'>My Cart</h1>
@@ -104,6 +132,8 @@ function Cart({ userId }) {
           </a>
         ))}
       </div>
+
+      <button className='mt-5' onClick={() => { sendQuote()}}>Get a Quote</button>
     </>
   );
 }

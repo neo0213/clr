@@ -52,6 +52,7 @@ function App() {
 
           <Route path="/product/:productName" element={<ProductDetail userId={userId}/>} />
           <Route path='/cart' element={<Cart userId={userId}/>}/>
+          <Route path='/login' element={<Cart userId={userId}/>}/>
         </Routes>
         <Message userId={userId}/>
       </div>
