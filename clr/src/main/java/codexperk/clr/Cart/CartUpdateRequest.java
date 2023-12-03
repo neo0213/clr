@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 public class CartUpdateRequest {
-    private List<String> productsToAdd;
+    private Map<String, Integer> productsToAddWithQuantity;
     private List<String> productsToRemove;
 
 }

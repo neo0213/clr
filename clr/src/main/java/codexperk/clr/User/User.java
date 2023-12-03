@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "user")
 @Data
@@ -20,7 +21,7 @@ public class User {
     private ObjectId id;
     private String userId;
     @DocumentReference
-    private List<Product> cart;
+    private Map<Product, Integer> cart;
     private List<Pending> pending;
     private Object checkout;
 

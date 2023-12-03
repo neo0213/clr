@@ -1,5 +1,4 @@
-// PendingItem.java
-package codexperk.clr.User;
+package codexperk.clr.Cart;
 
 import codexperk.clr.Product.Product;
 import lombok.*;
@@ -7,8 +6,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pending {
+public class CartItem {
     private Product product;
     private Integer quantity;
-    private Integer price;
 }

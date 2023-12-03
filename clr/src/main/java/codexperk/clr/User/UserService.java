@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -24,7 +25,8 @@ public class UserService {
     public User saveUser(User user) {
         User existingUser = userRepository.findByUserId(user.getUserId());
         if (existingUser == null) {
-            user.setCart(new ArrayList<>());
+            user.setUserId(user.getUserId());
+            user.setCart(new HashMap<>());
             return userRepository.save(user);
         } else {
             return existingUser;

@@ -2,16 +2,14 @@
 
     import codexperk.clr.Product.Product;
     import codexperk.clr.Product.ProductRepository;
-    import codexperk.clr.User.Checkout;
-    import codexperk.clr.User.Pending;
-    import codexperk.clr.User.User;
-    import codexperk.clr.User.UserRepository;
+    import codexperk.clr.User.*;
     import org.bson.types.ObjectId;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Service;
 
     import java.util.ArrayList;
     import java.util.List;
+    import java.util.Map;
 
 
     @Service
@@ -28,15 +26,17 @@
             User user = userRepository.findByUserId(userId);
 
             if (user != null) {
-                if (cartUpdateRequest.getProductsToAdd() != null) {
-                    for (String productId : cartUpdateRequest.getProductsToAdd()) {
-                        productRepository.findById(new ObjectId(productId)).ifPresent(product -> user.getCart().add(product));
+                if (cartUpdateRequest.getProductsToAddWithQuantity() != null) {
+                    for (Map.Entry<String, Integer> entry : cartUpdateRequest.getProductsToAddWithQuantity().entrySet()) {
+                        Product product = productRepository.findById(new ObjectId(entry.getKey())).get();
+                        user.getCart().put(product, entry.getValue());
                     }
                 }
 
                 if (cartUpdateRequest.getProductsToRemove() != null) {
                     for (String productId : cartUpdateRequest.getProductsToRemove()) {
-                        productRepository.findById(new ObjectId(productId)).ifPresent(product -> user.getCart().remove(product));
+                        Product product = productRepository.findById(new ObjectId(productId)).get();
+                        user.getCart().remove(product);
                     }
                 }
 
@@ -46,6 +46,7 @@
             return null; // Handle the case where the user is not found
         }
 
+
         public User checkout(String userId, CheckoutRequest checkoutRequest){
             User user = userRepository.findByUserId(userId);
             List<String> cart = checkoutRequest.getCart();
@@ -54,28 +55,31 @@
             Province province = provinceRepository.findByProvince(location);
 
             if (user != null) {
-                List<Pending> pendingItems = new ArrayList<>();
+                List<CheckoutItem> checkoutItems = new ArrayList<>();
                 int totalPrice = 0;
-                int deliveryFee = 0;
+                int deliveryFee = calculateDeliveryFee(province.getRegion_code());
                 for (int i = 0; i < cart.size(); i++) {
                     Product product = productRepository.findById(new ObjectId(cart.get(i))).get();
-                    totalPrice = product.getPrice() * quantity.get(i);
-                    deliveryFee = calculateDeliveryFee(province.getRegion_code());
-                    pendingItems.add(new Pending(
+                    int individualTotal = product.getPrice() * quantity.get(i);
+                    totalPrice += individualTotal;
+                    checkoutItems.add(new CheckoutItem(
                             product,
-                            quantity.get(i)
+                            quantity.get(i),
+                            individualTotal
                     ));
                 }
                 user.setCheckout(new Checkout(
+                        checkoutItems,
                         totalPrice,
                         location,
                         deliveryFee
                 ));
-                user.setPending(pendingItems);
                 userRepository.save(user);
             }
             return user;
         }
+
+
         private int calculateDeliveryFee(String regionCode) {
             return switch (regionCode) {
                 case "01", "02", "03", "04", "05" -> // Luzon
@@ -96,13 +100,23 @@
             String location = checkoutRequest.getLocation();
             Province province = provinceRepository.findByProvince(location);
 
+            List<CheckoutItem> checkoutItems = new ArrayList<>();
             int totalPrice = 0;
-            int deliveryFee = 0;
+            int deliveryFee = calculateDeliveryFee(province.getRegion_code());
             for (int i = 0; i < cart.size(); i++) {
                 Product product = productRepository.findById(new ObjectId(cart.get(i))).get();
-                totalPrice = product.getPrice() * quantity.get(i);
-                deliveryFee = calculateDeliveryFee(province.getRegion_code());
+                int individualTotal = product.getPrice() * quantity.get(i);
+                totalPrice += individualTotal;
+                checkoutItems.add(new CheckoutItem(
+                        product,
+                        quantity.get(i),
+                        individualTotal
+                ));
             }
-            return new Checkout(totalPrice, location, deliveryFee);
+            return new Checkout(checkoutItems,
+                    totalPrice,
+                    location,
+                    deliveryFee
+            );
         }
     }
