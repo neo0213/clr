@@ -1,25 +1,24 @@
-package codexperk.clr.Product;
+package codexperk.clr.Cart;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "products")
+@Document(collection = "province")
 @Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class Province {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
-    private String prodName;
-    private String img;
-    private Object specs;
-    private String category;
-    private Integer price;
+    private String province_code;
+    private String province_name;
+    private String psgc_code;
+    private String region_code;
 }
