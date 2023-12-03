@@ -100,7 +100,7 @@ const sendQuote = async () => {
       products.forEach((product) => {
         productList.push(product.prodName);
       });
-      concatenatedProductNames = productList.join(' ');
+      concatenatedProductNames = productList.join('\n');
     }
 
     await sendQuoteToChannel(groupChannel, channelUrl, concatenatedProductNames);
@@ -113,17 +113,23 @@ const sendQuote = async () => {
 const sendQuoteToChannel = async (groupChannel, channelUrl, concatenatedProductNames) => {
 
   const messageParams = new sb.UserMessageParams();
-          messageParams.message = concatenatedProductNames;
+          messageParams.message = `Requesting a quote for: \n ${concatenatedProductNames}`;
           groupChannel.sendUserMessage(messageParams, (message, error) => {
             if (error) {
               console.error("SendBird Message Sending Failed:", error);
             } else {
               console.log("Message sent successfully:", message);
+              clickModal();
             }
     });
 };
 
   
+
+const clickModal =  () => {
+  const modalChat = document.querySelector('.Message button');
+  modalChat.click();
+};
   
 
   return (
@@ -142,8 +148,11 @@ const sendQuoteToChannel = async (groupChannel, channelUrl, concatenatedProductN
           </a>
         ))}
       </div>
+      <div className='mt-5 d-flex justify-content-end align-items-center'>
+        <button className='me-3' onClick={() => { sendQuote()}}>Bulk orders? Get a Quote</button>
+        <a className='checkout-btn btn-primary btn text-align-center' href='/checkout'>Proceed to checkout</a>
+      </div>
 
-      <button className='mt-5' onClick={() => { sendQuote()}}>Get a Quote</button>
     </>
   );
 }

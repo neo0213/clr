@@ -61,6 +61,11 @@ function ProductDetail({ userId }) {
   
   };
 
+  const clickModal =  () => {
+    const modalChat = document.querySelector('.Message button');
+    modalChat.click();
+  };
+
   return (
     <div>
       {product ? (
@@ -84,18 +89,17 @@ function ProductDetail({ userId }) {
 
             <div className='d-flex flex-row'>
               <button className="btn btn-light req-btn rounded me-2 border border-black border-2" onClick={handleAddToCart} disabled={isAddingToCart}>Add to cart</button>
-              <button className="btn btn-primary chat-prod-btn rounded">Chat with us</button>
+              <button className="btn btn-primary chat-prod-btn rounded" onClick={clickModal}>Chat with us</button>
             </div>
             </div>
 
           </div>
           
-          <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed bottom-0 end-0 m-3">
+          <Toast show={showToast} onClose={() => setShowToast(false)} className="position-fixed top-0 end-0 m-3">
 
             <Toast.Header>
               <strong class="me-auto">CLR</strong>
               <small>1 sec ago</small>
-              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </Toast.Header>
             <Toast.Body>
               <div className='text-start'>Product Added to Cart </div>

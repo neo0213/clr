@@ -5,7 +5,7 @@ import Navbar from './components/Navbar.jsx';
 import ProductList from './hooks/ProductList';
 import ProductDetail from './components/ProductDetail';
 import Cart from './components/cart.jsx';
-import ProvinceDropdown from './components/location.jsx';
+import Checkout from './components/checkout.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Token } from './Token.jsx';
 import  configData from './config.json';
@@ -113,7 +113,7 @@ function App() {
           <Route path="/product/:productName" element={<ProductDetail userId={userId}/>} />
           <Route path='/cart' element={<Cart userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel} sb={sb}/> }/>
           <Route path='/login' element={<Cart userId={userId}/>}/>
-          <Route path='/test' element={<ProvinceDropdown/>}/>
+          <Route path='/checkout' element={<Checkout userId={userId}/>}/>
         </Routes>
         <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl}/>
       </div>

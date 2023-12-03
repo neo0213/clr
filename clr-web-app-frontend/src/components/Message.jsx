@@ -85,7 +85,7 @@ export default function Message({ userId, quoteMessage, channelUrl }) {
         <SendbirdApp appId={APP_ID} userId={USER_ID}>
           {channelUrl && <SendbirdChannel channelUrl={channelUrl} />}
         </SendbirdApp>
-        <button onClick={closeModal}>Close</button>
+        <button onClick={closeModal} className="mt-3">Close</button>
       </Modal>
     </div>
   );
