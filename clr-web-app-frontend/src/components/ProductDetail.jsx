@@ -76,7 +76,7 @@ function ProductDetail({ userId }) {
             </div>
             <div className='col-lg-6 text-start'>
               <h2 className='product-header mt-5'>{product.prodName}</h2>
-              <div>{product.price}</div>
+              <div className='text-success'>₱{product.price}</div>
               <p className='pt-4'>Specifications:</p>
             <ul className='prod-specs p-2'>
               {product.specs
