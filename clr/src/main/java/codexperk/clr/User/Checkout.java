@@ -1,4 +1,3 @@
-// Checkout.java
 package codexperk.clr.User;
 
 import java.util.List;

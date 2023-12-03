@@ -28,15 +28,13 @@
             if (user != null) {
                 if (cartUpdateRequest.getProductsToAddWithQuantity() != null) {
                     for (Map.Entry<String, Integer> entry : cartUpdateRequest.getProductsToAddWithQuantity().entrySet()) {
-                        Product product = productRepository.findById(new ObjectId(entry.getKey())).get();
-                        user.getCart().put(product, entry.getValue());
+                        user.getCart().put(entry.getKey(), entry.getValue());
                     }
                 }
 
                 if (cartUpdateRequest.getProductsToRemove() != null) {
                     for (String productId : cartUpdateRequest.getProductsToRemove()) {
-                        Product product = productRepository.findById(new ObjectId(productId)).get();
-                        user.getCart().remove(product);
+                        user.getCart().remove(productId);
                     }
                 }
 

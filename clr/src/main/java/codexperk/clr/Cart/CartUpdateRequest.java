@@ -11,5 +11,4 @@ import java.util.Map;
 public class CartUpdateRequest {
     private Map<String, Integer> productsToAddWithQuantity;
     private List<String> productsToRemove;
-
 }

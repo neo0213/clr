@@ -20,8 +20,7 @@ public class User {
     @Id
     private ObjectId id;
     private String userId;
-    @DocumentReference
-    private Map<Product, Integer> cart;
+    private Map<String, Integer> cart;
     private List<Pending> pending;
     private Object checkout;
 
@@ -29,3 +28,4 @@ public class User {
         this.userId = userId;
     }
 }
+
