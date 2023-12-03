@@ -8,7 +8,7 @@ import  configData from '../config.json';
 
 const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
 
-function Cart({ userId, channelUrl, setChannelUrl }) {
+function Cart({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
   const [products, setProducts] = useState([]);
   let { accessToken, setAccessToken } = useContext(Token);
   const [quoteMessage, setQuoteMessage] = useState("");
@@ -103,31 +103,24 @@ const sendQuote = async () => {
       concatenatedProductNames = productList.join(' ');
     }
 
-    await sendQuoteToChannel(channelUrl, concatenatedProductNames);
+    await sendQuoteToChannel(groupChannel, channelUrl, concatenatedProductNames);
     
   } catch (error) {
     console.error('Error sending quote to Sendbird:', error);
   }
 };
 
-const sendQuoteToChannel = async (channelUrl, concatenatedProductNames) => {
-  try {
-    // Replace this with your Sendbird logic
-    const sendbirdEndpoint = `https://api-${APP_ID}.sendbird.com/v3/group_channels/${channelUrl}/messages`;
+const sendQuoteToChannel = async (groupChannel, channelUrl, concatenatedProductNames) => {
 
-    const sendbirdPayload = {
-      message_type: 'MESG', 
-      user_id: userId,
-      message: `Quote: ${concatenatedProductNames}`
-    };
-
-    const response = await axios.post(sendbirdEndpoint, sendbirdPayload);
-
-    // Handle the response as needed
-    console.log('Sendbird API Response:', response.data);
-  } catch (error) {
-    console.error('Error sending quote to Sendbird:', error);
-  }
+  const messageParams = new sb.UserMessageParams();
+          messageParams.message = concatenatedProductNames;
+          groupChannel.sendUserMessage(messageParams, (message, error) => {
+            if (error) {
+              console.error("SendBird Message Sending Failed:", error);
+            } else {
+              console.log("Message sent successfully:", message);
+            }
+    });
 };
 
   
