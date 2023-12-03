@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { NavLink } from "react-router-dom";
 
 function Navbar() {
 
@@ -29,6 +30,9 @@ function Navbar() {
                 ) : (
                   <button onClick={() => logout()}>Logout</button> 
                 )}
+            </div>
+            <div>
+              <a href="/profile">Profile</a>
             </div>
 
         </div>

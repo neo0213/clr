@@ -19,6 +19,8 @@ public class User {
     @Id
     private ObjectId id;
     private String userId;
+    private String name;
+    private String profilePicture;
     @DocumentReference
     private List<Product> cart;
 

@@ -15,6 +15,7 @@ import Message from './components/Message.jsx';
 import { App as SendbirdApp, Channel as SendbirdChannel } from "sendbird-uikit";
 import SendBird from "sendbird";
 import "sendbird-uikit/dist/index.css";
+import Profile from './components/Profile.jsx';
 
 
 const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
@@ -114,6 +115,7 @@ function App() {
           <Route path='/cart' element={<Cart userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel} sb={sb}/> }/>
           <Route path='/login' element={<Cart userId={userId}/>}/>
           <Route path='/checkout' element={<Checkout userId={userId}/>}/>
+          <Route path='/profile' element={<Profile userId={userId}/>}/>
         </Routes>
         <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl}/>
       </div>
