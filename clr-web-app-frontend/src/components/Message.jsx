@@ -6,13 +6,10 @@ import "./styleMessage.css";
 import Modal from 'react-modal';
 
 const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
-const OTHER_USER_ID = "sendbird_desk_agent_id_49a13fd6-71e5-47dc-be34-831c27aba421"; // The ID of the user you want to create a channel with
+const OTHER_USER_ID = "sendbird_desk_agent_id_49a13fd6-71e5-47dc-be34-831c27aba421";
 
-export default function Message({ userId, quoteMessage }) {
-  let msg = "Requesting a quote";
-  console.log(userId);
+export default function Message({ userId, quoteMessage, channelUrl }) {
   let USER_ID = userId;
-  const [channelUrl, setChannelUrl] = useState(null);
   const [modalIsOpen, setIsOpen] = useState(false);
 
   function openModal() {
@@ -22,40 +19,48 @@ export default function Message({ userId, quoteMessage }) {
   function closeModal() {
     setIsOpen(false);
   }
- 
-  useEffect(() => {
-    const sb = new SendBird({ appId: APP_ID });
-    sb.connect(USER_ID, null , (user, error) => {
-      if (error) {
-        console.log("SendBird Login Failed:", error);
-        return;
-      }
 
-      const params = new sb.GroupChannelParams();
-      params.isDistinct = false;
-      params.addUserIds([OTHER_USER_ID]);
+  // Function to create Sendbird channel
+  // const createSendbirdChannel = () => {
+  //   const sb = new SendBird({ appId: APP_ID });
 
-      sb.GroupChannel.createChannel(params, (groupChannel, error) => {
-        if (error) {
-          console.error("SendBird Group Channel Creation Failed:", error);
-        } else {
-          console.log("Group Channel:", groupChannel);
-          setChannelUrl(groupChannel.url);
+  //   sb.connect(USER_ID, null, (user, error) => {
+  //     if (error) {
+  //       console.log("SendBird Login Failed:", error);
+  //       return;
+  //     }
 
-          // Send a message after the group channel is created
-          var messageParams = new sb.UserMessageParams();
-          messageParams.message = quoteMessage || "Requesting a quote";
-          groupChannel.sendUserMessage(messageParams, function(message, error) {
-            if (error) {
-              console.error("SendBird Message Sending Failed:", error);
-            } else {
-              console.log("Message sent successfully:", message);
-            }
-          });
-        }
-      });
-    });
-  }, [quoteMessage]);
+  //     const params = new sb.GroupChannelParams();
+  //     params.isDistinct = false;
+  //     params.addUserIds([OTHER_USER_ID]);
+
+  //     sb.GroupChannel.createChannel(params, (groupChannel, error) => {
+  //       if (error) {
+  //         console.error("SendBird Group Channel Creation Failed:", error);
+  //       } else {
+  //         console.log("Group Channel:", groupChannel);
+  //         setChannelUrl(groupChannel.url);
+
+  //         // Send a message after the group channel is created
+  //         const messageParams = new sb.UserMessageParams();
+  //         messageParams.message = quoteMessage || "Requesting a quote";
+  //         groupChannel.sendUserMessage(messageParams, (message, error) => {
+  //           if (error) {
+  //             console.error("SendBird Message Sending Failed:", error);
+  //           } else {
+  //             console.log("Message sent successfully:", message);
+  //           }
+  //         });
+  //       }
+  //     });
+  //   });
+  // };
+
+  // Create channel on component mount
+  // useEffect(() => {
+  //   createSendbirdChannel();
+  // }, []); // Empty dependency array means this effect runs once on mount
+
   const customStyles = {
     content: {
       position: 'fixed',
@@ -66,7 +71,8 @@ export default function Message({ userId, quoteMessage }) {
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)'
     }
-  };  
+  };
+
   return (
     <div className="Message">
       <button onClick={openModal}>Messages</button>

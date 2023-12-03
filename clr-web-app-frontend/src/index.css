@@ -197,3 +197,8 @@ button:focus-visible {
   color: white;
   font-weight: 700;
 }
+
+.App {
+  height: 100vh;  
+  width: 100vw;   
+}

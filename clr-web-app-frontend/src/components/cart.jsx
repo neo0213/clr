@@ -4,20 +4,16 @@ import { useParams } from 'react-router-dom';
 import { Token } from '../Token.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
 import  configData from '../config.json';
-import Message from './Message.jsx';
 
 
-function Cart({ userId }) {
+const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
+
+function Cart({ userId, channelUrl, setChannelUrl }) {
   const [products, setProducts] = useState([]);
   let { accessToken, setAccessToken } = useContext(Token);
   const [quoteMessage, setQuoteMessage] = useState("");
 
-  function openMessageModal(message) {
-    setQuoteMessage(message);
-    setIsOpen(true);
-  }
 
-  
   const {
     error,
     isLoading,
@@ -27,58 +23,53 @@ function Cart({ userId }) {
     logout,
   } = useAuth0(); 
 
-  useEffect(() => { // This block of code is for requesting an access token to be used for each request
-    const getAccessToken = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        const accessToken = await getAccessTokenSilently({
+        const token = await getAccessTokenSilently({
           audience: configData.audience,
           scope: configData.scope,
         });
-        setAccessToken(accessToken); // Saves the accessToken as a Context which essentially allows it to be a global variable
-      } catch (e) {
-        console.log(e.message);
-      }
-    };
-    getAccessToken();
-  }, [getAccessTokenSilently]); 
-  if ( error ) {
-    return <div>Oops... {error.message}</div>;
-  }
 
-  if ( isLoading ) {
-    return <div class="spinner-border mt-5" style={{width: 8 + 'rem', height: 8 + 'rem'}} role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>;
-  }
+        setAccessToken(token);
 
-  if ( !isAuthenticated ) {
-    return loginWithRedirect();
-  } else {
-    try {
-      axios.post('http://localhost:8080/api/v1/user', { // This block of code is for saving the userId on the database if its not there yet
-        "userId" : userId
-    }, {
-        headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${accessToken}`
-        }
-      }); 
-      try {
-        axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+        const response = await axios.post('http://localhost:8080/api/v1/user', {
+          "userId": userId
+        }, {
           headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${token}`
           }
-        }).then(function(response){
-          setProducts(response.data.cart);
-        })
+        });
+
+        setProducts(response.data.cart);
       } catch (error) {
-        console.log('Error fetching cart: ', error);
+        console.log('Error fetching data: ', error);
       }
-    } catch (error) {
-      console.log('Error saving: ', error);
-    }
+    };
+
+    fetchData();
+  }, [getAccessTokenSilently, setAccessToken, userId]);
+
+  
+  if (error) {
+    return <div>Oops... {error.message}</div>;
   }
+  
+  if (isLoading) {
+    return (
+      <div className="spinner-border mt-5" style={{ width: 8 + 'rem', height: 8 + 'rem' }} role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return loginWithRedirect();
+  } 
+  
+
+  
 
   const handleRemoveFromCart = async (productId) => {
     try {
@@ -98,21 +89,47 @@ function Cart({ userId }) {
     }
   };
 
-  let productList = [];
-  let concatenatedProductNames;
-  const sendQuote = async () => {
+ // ... (previous imports)
+
+const sendQuote = async () => {
+  try {
     let productList = [];
     let concatenatedProductNames;
-  
+
     if (products && Array.isArray(products)) {
       products.forEach((product) => {
         productList.push(product.prodName);
       });
       concatenatedProductNames = productList.join(' ');
     }
-  
-    openMessageModal(concatenatedProductNames);
-  };
+
+    await sendQuoteToChannel(channelUrl, concatenatedProductNames);
+    
+  } catch (error) {
+    console.error('Error sending quote to Sendbird:', error);
+  }
+};
+
+const sendQuoteToChannel = async (channelUrl, concatenatedProductNames) => {
+  try {
+    // Replace this with your Sendbird logic
+    const sendbirdEndpoint = `https://api-${APP_ID}.sendbird.com/v3/group_channels/${channelUrl}/messages`;
+
+    const sendbirdPayload = {
+      message_type: 'MESG', 
+      user_id: userId,
+      message: `Quote: ${concatenatedProductNames}`
+    };
+
+    const response = await axios.post(sendbirdEndpoint, sendbirdPayload);
+
+    // Handle the response as needed
+    console.log('Sendbird API Response:', response.data);
+  } catch (error) {
+    console.error('Error sending quote to Sendbird:', error);
+  }
+};
+
   
   
 
