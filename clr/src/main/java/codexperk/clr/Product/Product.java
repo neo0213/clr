@@ -21,5 +21,4 @@ public class Product {
     private String img;
     private Object specs;
     private String category;
-    private Integer price;
 }

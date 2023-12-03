@@ -21,8 +21,6 @@ public class User {
     private String userId;
     @DocumentReference
     private List<Product> cart;
-    private List<Pending> pending;
-    private Object checkout;
 
     public User(String userId) {
         this.userId = userId;
