@@ -212,15 +212,3 @@ button:focus-visible {
 .checkout-btn {
   padding: 0.6em 1.2em !important;
 }
-
-.checkout:disabled {
-  background-color: #EBEBE4;
-}
-
-.input-checkout {
-  background-color: white;
-  color: black;
-  padding: 10px;
-  border: 1px solid black;
-  width: 50%;
-}
