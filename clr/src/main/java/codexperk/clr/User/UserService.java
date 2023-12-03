@@ -27,6 +27,8 @@ public class UserService {
         if (existingUser == null) {
             user.setUserId(user.getUserId());
             user.setCart(new HashMap<>());
+            user.setPending(new ArrayList<>());
+            user.setCheckout(new HashMap<>());
             return userRepository.save(user);
         } else {
             return existingUser;
