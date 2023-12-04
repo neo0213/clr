@@ -16,6 +16,12 @@ const Checkout = ({ userId }) => {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedBarangay, setSelectedBarangay] = useState("");
+  const [apiResponse, setApiResponse] = useState(null);
+  const [cartData, setCartData] = useState({
+    cart: {},
+    pending: [],
+    checkout: {}
+  });
 
   const { accessToken, setAccessToken } = useContext(Token);
 
@@ -58,7 +64,61 @@ const Checkout = ({ userId }) => {
 
     // Reset barangay list
     setBarangayList([]);
+
+    sendApiRequest(selectedRegion, provinceCode);
   };
+
+  const sendApiRequest = async (selectedRegion, selectedProvince) => {
+    try {
+      const token = await getAccessTokenSilently({
+        audience: configData.audience,
+        scope: configData.scope,
+      });
+  
+      setAccessToken(token);
+  
+      const response = await axios.post('http://localhost:8080/api/v1/user', {
+        "userId": userId
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      const uniqueProductIds = Object.keys(response.data.cart);
+  
+      // Get the province name
+      const provinceName = provinceList.find(province => province.province_code === selectedProvince)?.province_name;
+  
+      // Update the location in the state with the province name
+      const location = provinceName || "Unknown Province";
+      const requestBody = {
+        cart: uniqueProductIds,
+        quantity: uniqueProductIds.map(id => response.data.cart[id]),
+        location: location,
+      };
+  
+      // Make the API call with the updated request body
+      const apiResponse = await axios.post('http://localhost:8080/api/v1/cart/check', requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setApiResponse(apiResponse.data);
+  
+      // Handle the API response as needed
+      console.log('API Response:', apiResponse.data);
+  
+      // Fetch and update products based on the new location or any other logic
+      // ...
+  
+    } catch (error) {
+      console.log('Error fetching data: ', error);
+    }
+  };  
 
   const handleCityChange = async (cityCode) => {
     setSelectedCity(cityCode);
@@ -87,7 +147,21 @@ const Checkout = ({ userId }) => {
           }
         });
 
-        setProducts(response.data.cart);
+        setCartData(response.data);
+        const uniqueProductIds = Object.keys(response.data.cart);
+
+        try {
+          const response = await axios.get('http://localhost:8080/api/v1/products');
+          const productDetails = response.data;
+          const productsInCart = productDetails.filter((product) => uniqueProductIds.includes(product.id));
+
+          setProducts(productsInCart);
+        } catch (error) {
+          console.log('Error fetching product details: ', error);
+        }
+
+        
+     
       } catch (error) {
         console.log('Error fetching data: ', error);
       }
@@ -96,14 +170,68 @@ const Checkout = ({ userId }) => {
     fetchData();
   }, [getAccessTokenSilently, setAccessToken, userId]);
 
+
+  const handleCheckout = async () => {
+    try {
+      const token = await getAccessTokenSilently({
+        audience: configData.audience,
+        scope: configData.scope,
+      });
+
+      setAccessToken(token);
+
+      const provinceName = provinceList.find(province => province.province_code === selectedProvince)?.province_name;
+      const requestBody = {
+        cart: Object.keys(cartData.cart),
+        quantity: Object.values(cartData.cart),
+        location: provinceName, 
+        address: document.getElementsByName('address')[0].value, 
+      };
+
+      // Make the API call to initiate the checkout
+      const checkoutResponse = await axios.post(`http://localhost:8080/api/v1/cart/checkout/${userId}`, requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+
+      console.log('Checkout Response:', checkoutResponse.data);
+
+      if (checkoutResponse.status === 200) {
+        const productsToRemove = Object.keys(cartData.cart).map((item) => item);
+  
+
+        await axios.post(`http://localhost:8080/api/v1/cart/${userId}`, {
+          productsToRemove: productsToRemove,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        setProducts((prevProducts) => prevProducts.filter((product) => !productsToRemove.includes(product.id)));
+        location.href = '/';
+      }
+    } catch (error) {
+      console.error('Error during checkout: ', error);
+    }
+  };
+
   return (
     <div>
       <div className='list-group mt-4'>
         <h2 className='my-3'>Checkout</h2>
         {products.map((product) => (
-          <a href={'/product/' + product.prodName} className='list-group-item list-group-item-action d-flex flex-start align-items-center' key={product.id}>
+          <a href={'/product/' + product.prodName} className='list-group-item list-group-item-action d-flex flex-start align-items-center px-4' key={product.id}>
             <img className='me-5' src={product.img} alt={product.prodName} style={{ maxWidth: '100px' }} />
             <span className=''>{product.prodName}</span>
+            <div className='ms-auto'>
+            <span className=''>Qty: {cartData.cart[product.id]}</span>
+            <div className='text-success ms-auto'>₱{product.price}</div>
+            </div>
           </a>
         ))}
       </div>
@@ -211,7 +339,39 @@ const Checkout = ({ userId }) => {
         <label htmlFor="address" className='me-2'>Address: </label>
         <input className="input-checkout" type="text" name='address'/>
     </div>
-    
+        
+    {apiResponse && (
+      <>
+          <div className='mt-5 d-flex justify-content-between align-items-center'>
+            <div>
+              <p>Location: {apiResponse.location}</p>
+            </div>
+
+            <div className='mt-3 me-4 w-25'>
+              <div className='d-flex justify-content-between'>       
+                <p>Subtotal Price: </p> 
+                <p> ₱{apiResponse.totalPrice}</p>
+              </div>
+              <div className='d-flex justify-content-between'> 
+              <p>Delivery Fee:</p>
+              <p> ₱{apiResponse.deliveryFee}</p>
+              </div>
+
+              <div className='d-flex justify-content-between'> 
+              <p>Total Price:</p>
+              <p> ₱{apiResponse.deliveryFee + apiResponse.totalPrice}</p>
+              </div>
+
+            </div>
+                    </div>
+            <div className='d-flex justify-content-end mt-4'>
+              <button className='btn btn-primary' onClick={handleCheckout}>
+                Checkout
+              </button>
+            </div>
+
+          </>
+        )}
     </div> 
    
     </div>

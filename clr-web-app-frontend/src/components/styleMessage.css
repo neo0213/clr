@@ -12,8 +12,8 @@
     display: none !important;
   }
   .sendbird-conversation{
-    height: 70vh;
-    width: 500px;
+    height: 70vh !important;
+    width: 500px !important;
   }
 
 

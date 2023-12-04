@@ -12,7 +12,11 @@ function Cart({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
   const [products, setProducts] = useState([]);
   let { accessToken, setAccessToken } = useContext(Token);
   const [quoteMessage, setQuoteMessage] = useState("");
-
+  const [cartData, setCartData] = useState({
+    cart: {},
+    pending: [],
+    checkout: {}
+  });
 
   const {
     error,
@@ -42,7 +46,20 @@ function Cart({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
           }
         });
 
-        setProducts(response.data.cart);
+        setCartData(response.data);
+        const uniqueProductIds = Object.keys(response.data.cart);
+
+        try {
+          const response = await axios.get('http://localhost:8080/api/v1/products');
+          const productDetails = response.data;
+          const productsInCart = productDetails.filter((product) => uniqueProductIds.includes(product.id));
+
+          setProducts(productsInCart);
+        } catch (error) {
+          console.log('Error fetching product details: ', error);
+        }
+
+        
       } catch (error) {
         console.log('Error fetching data: ', error);
       }
@@ -82,6 +99,7 @@ function Cart({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
         }
       });
 
+   
       // Update the products list after successful removal
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
     } catch (error) {
@@ -136,17 +154,20 @@ const clickModal =  () => {
     <>
       <h1 className='text-start mt-5'>My Cart</h1>
       <div className='list-group mt-4'>
-        {products.map((product) => (
+        {products ? products.map((product) => (
           <a href={'/product/'+product.prodName} className='list-group-item list-group-item-action d-flex flex-start align-items-center' key={product.id}>
             <img className='me-5' src={product.img} alt={product.prodName} style={{ maxWidth: '100px' }} />
             <span className=''>{product.prodName}</span>
+            <div className='ms-auto'>
+            <span className=''>Qty: {cartData.cart[product.id]}</span>
             <button
-              className='ms-auto btn btn-danger' onClick={() => handleRemoveFromCart(product.id)}
+              className='btn btn-danger ms-4' onClick={() => handleRemoveFromCart(product.id)}
             >
               <img width="15" height="15" src="https://img.icons8.com/ios-glyphs/30/FFFFFF/filled-trash.png" alt="filled-trash"/>
             </button>
+            </div>
           </a>
-        ))}
+        )) : 'You have empty cart' }
       </div>
       <div className='mt-5 d-flex justify-content-end align-items-center'>
         <button className='me-3' onClick={() => { sendQuote()}}>Bulk orders? Get a Quote</button>

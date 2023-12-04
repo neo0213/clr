@@ -40,7 +40,7 @@ function ProductDetail({ userId }) {
         console.log(userId);
         console.log(accessToken);
         await axios.post(`http://localhost:8080/api/v1/cart/${userId}`, {
-          productsToAdd: [product.id]
+          productsToAddWithQuantity: {[product.id]:1}
         }, {
           headers: {
             "Content-Type": "application/json",

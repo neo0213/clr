@@ -10,7 +10,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Token } from './Token.jsx';
 import  configData from './config.json';
 import Message from './components/Message.jsx';
-
+import adminPanel from './components/admin_panel.jsx';
+import Orders from './components/orders.jsx';
 
 import { App as SendbirdApp, Channel as SendbirdChannel } from "sendbird-uikit";
 import SendBird from "sendbird";
@@ -27,6 +28,7 @@ function App() {
   const [channelUrl, setChannelUrl] = useState(null);
   const [groupChannel, setGroupChannel] = useState(null);
   const [sb, setSB] = useState(null);
+  const [isInAdminPanel, setIsInAdminPanel] = useState(false);
   const {
     user,
     getAccessTokenSilently
@@ -39,6 +41,8 @@ function App() {
     console.log("Must login first:",error.message);
   }
 
+
+  
 
 
   useEffect(() => { // This block of code is for requesting an access token to be used for each request
@@ -114,9 +118,15 @@ function App() {
           <Route path='/cart' element={<Cart userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel} sb={sb}/> }/>
           <Route path='/login' element={<Cart userId={userId}/>}/>
           <Route path='/checkout' element={<Checkout userId={userId}/>}/>
+          <Route
+              path="/admin_panel"
+              element={<adminPanel />}
+              onEnter={() => setIsInAdminPanel(true)}
+              onLeave={() => setIsInAdminPanel(false)}
+            />
+          <Route path='/orders' element={<Orders userId={userId}/>}/>
         </Routes>
-        <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl}/>
-      </div>
+        {!isInAdminPanel && <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} />}      </div>
     </Router>
     </>
   );

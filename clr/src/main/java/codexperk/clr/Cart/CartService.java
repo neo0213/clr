@@ -24,25 +24,34 @@
 
         public User updateCart(String userId, CartUpdateRequest cartUpdateRequest) {
             User user = userRepository.findByUserId(userId);
-
+        
             if (user != null) {
                 if (cartUpdateRequest.getProductsToAddWithQuantity() != null) {
                     for (Map.Entry<String, Integer> entry : cartUpdateRequest.getProductsToAddWithQuantity().entrySet()) {
-                        user.getCart().put(entry.getKey(), entry.getValue());
+                        String productId = entry.getKey();
+                        Integer newQuantity = entry.getValue();
+        
+                        if (user.getCart().containsKey(productId)) {
+                            Integer currentQuantity = user.getCart().get(productId);
+                            user.getCart().put(productId, currentQuantity + newQuantity);
+                        } else {
+                            user.getCart().put(productId, newQuantity);
+                        }
                     }
                 }
-
+        
                 if (cartUpdateRequest.getProductsToRemove() != null) {
                     for (String productId : cartUpdateRequest.getProductsToRemove()) {
                         user.getCart().remove(productId);
                     }
                 }
-
+        
                 return userRepository.save(user);
             }
-
+        
             return null; // Handle the case where the user is not found
         }
+        
 
 
         public User checkout(String userId, CheckoutRequest checkoutRequest){
