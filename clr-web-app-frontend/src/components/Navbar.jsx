@@ -24,6 +24,7 @@ function Navbar() {
             </div>
             <div className="d-flex justify-content-center align-items-center">
                 <a href="/cart"><img className="me-4" width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/shopping-cart--v1.png" alt="shopping-cart--v1"/></a>
+                <a href="/orders"><img className="me-4"width="30" height="30" src="https://img.icons8.com/ios/50/shopping-bag--v1.png" alt="shopping-bag--v1"/></a>
                 {!isAuthenticated ? (
                   <button onClick={() => loginWithRedirect()}>Login</button>
                 ) : (
