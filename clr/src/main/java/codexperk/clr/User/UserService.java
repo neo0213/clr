@@ -37,5 +37,14 @@ public class UserService {
             return existingUser;
         }
     }
+    public List<String> allUserIds() {
+        List<UserRepository.UserIdProjection> userIdProjections = userRepository.findAllUserIds();
+        List<String> userIds = new ArrayList<>();
+        for (UserRepository.UserIdProjection userIdProjection : userIdProjections) {
+            userIds.add(userIdProjection.getUserId());
+        }
+        return userIds;
+    }
+
 
 }

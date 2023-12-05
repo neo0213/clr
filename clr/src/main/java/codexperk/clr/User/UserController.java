@@ -1,5 +1,6 @@
 package codexperk.clr.User;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUser(){
-        return new ResponseEntity<List<User>>(userService.allUser(), HttpStatus.OK);
+    public ResponseEntity<List<String>> getAllUserId() throws JsonProcessingException {
+        return new ResponseEntity<List<String>>(userService.allUserIds(), HttpStatus.OK);
     }
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUser(@PathVariable String userId){

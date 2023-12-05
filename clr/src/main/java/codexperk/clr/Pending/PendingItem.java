@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class PendingItem {
     @DocumentReference
     private Product product;

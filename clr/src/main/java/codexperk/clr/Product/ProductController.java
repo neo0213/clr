@@ -25,10 +25,10 @@ public class ProductController {
     }
     @PostMapping("/add")
     public ResponseEntity<Product> addProduct(@RequestBody Product product){
-        return new ResponseEntity<Product>(productService.createProduct(product), HttpStatus.CREATED);
+        return new ResponseEntity<Product>(productService.createProduct(product), HttpStatus.OK);
     }
     @PostMapping("/remove")
     public ResponseEntity<String> removeProduct(@RequestParam String prodName){
-        return new ResponseEntity<String>(productService.deleteProduct(prodName), HttpStatus.CREATED);
+        return new ResponseEntity<String>(productService.deleteProduct(prodName), HttpStatus.OK);
     }
 }
