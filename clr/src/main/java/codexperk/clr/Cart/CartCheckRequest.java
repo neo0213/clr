@@ -7,9 +7,8 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CheckoutRequest {
+public class CartCheckRequest {
     private List<String> cart;
     private List<Integer> quantity;
-    private String location;
+    private String province;
 }
-

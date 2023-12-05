@@ -1,14 +1,16 @@
-// PendingItem.java
-package codexperk.clr.User;
+package codexperk.clr.Checkout;
 
 import codexperk.clr.Product.Product;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pending {
+public class CheckoutItem {
+    @DocumentReference
     private Product product;
     private Integer quantity;
     private Integer price;
 }
+
