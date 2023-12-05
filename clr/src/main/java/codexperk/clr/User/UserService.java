@@ -23,15 +23,15 @@ public class UserService {
         return userRepository.findByUserId(userId);
     }
     public User saveUser(User user) {
-        if (user == null){
+        if (user.getUserId() == null){
             return null;
         }
         User existingUser = userRepository.findByUserId(user.getUserId());
         if (existingUser == null) {
             user.setUserId(user.getUserId());
             user.setCart(new HashMap<>());
-            user.setPending(new ArrayList<>());
             user.setCheckout(new ArrayList<>());
+            user.setPending(new ArrayList<>());
             return userRepository.save(user);
         } else {
             return existingUser;

@@ -23,4 +23,12 @@ public class ProductController {
     public ResponseEntity<Optional<Product>> getProduct(@PathVariable ObjectId id){
         return new ResponseEntity<Optional<Product>>(productService.product(id), HttpStatus.OK);
     }
+    @PostMapping("/add")
+    public ResponseEntity<Product> addProduct(@RequestBody Product product){
+        return new ResponseEntity<Product>(productService.createProduct(product), HttpStatus.CREATED);
+    }
+    @PostMapping("/remove")
+    public ResponseEntity<String> removeProduct(@RequestParam String prodName){
+        return new ResponseEntity<String>(productService.deleteProduct(prodName), HttpStatus.CREATED);
+    }
 }

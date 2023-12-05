@@ -1,6 +1,5 @@
 package codexperk.clr.Cart;
 
-import codexperk.clr.User.User;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

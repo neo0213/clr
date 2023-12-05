@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -28,7 +27,7 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable String userId){
         return new ResponseEntity<User>(userService.user(userId), HttpStatus.OK);
     }
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User savedUser = userService.saveUser(user);
         return ResponseEntity.ok(savedUser);
