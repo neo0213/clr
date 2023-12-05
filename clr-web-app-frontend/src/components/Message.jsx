@@ -81,6 +81,7 @@ export default function Message({ userId, quoteMessage, channelUrl }) {
         onRequestClose={closeModal}
         contentLabel="Message"
         style={customStyles}
+        
       >
         <SendbirdApp appId={APP_ID} userId={USER_ID}>
           {channelUrl && <SendbirdChannel channelUrl={channelUrl} />}

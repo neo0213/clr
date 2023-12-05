@@ -11,11 +11,12 @@ import { Token } from './Token.jsx';
 import  configData from './config.json';
 import Message from './components/Message.jsx';
 import Orders from './components/orders.jsx';
-
+import axios from 'axios';
 import { App as SendbirdApp, Channel as SendbirdChannel } from "sendbird-uikit";
 import SendBird from "sendbird";
 import "sendbird-uikit/dist/index.css";
-
+import ChatAdmin from './components/ChatAdmin.jsx';
+import ProductForm from './components/AdminDashboard.jsx';
 
 const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
 const OTHER_USER_ID = "sendbird_desk_agent_id_49a13fd6-71e5-47dc-be34-831c27aba421";
@@ -27,7 +28,6 @@ function App() {
   const [channelUrl, setChannelUrl] = useState(null);
   const [groupChannel, setGroupChannel] = useState(null);
   const [sb, setSB] = useState(null);
-  const [isInAdminPanel, setIsInAdminPanel] = useState(false);
   const {
     user,
     getAccessTokenSilently
@@ -59,7 +59,13 @@ function App() {
     getAccessToken();
   }, [getAccessTokenSilently]); 
 
+  
   const createSendbirdChannel = () => {
+
+    if(userId){
+      if(userId !== '656f279d8117da0d8b51e41b'){
+
+     
     const sb = new SendBird({ appId: APP_ID });
 
     setSB(sb);
@@ -73,7 +79,8 @@ function App() {
       const params = new sb.GroupChannelParams();
       params.isDistinct = false;
       params.addUserIds([OTHER_USER_ID]);
-
+      params.includeEmptyChannel=true;
+      // params.setIncludeEmpty(true);
       sb.GroupChannel.createChannel(params, (groupChannel, error) => {
         if (error) {
           console.error("SendBird Group Channel Creation Failed:", error);
@@ -81,20 +88,30 @@ function App() {
           console.log("Group Channel:", groupChannel);
           setChannelUrl(groupChannel.url);
           setGroupChannel(groupChannel);
-
-          // Send a message after the group channel is created
-          const messageParams = new sb.UserMessageParams();
-          messageParams.message = "Requesting a quote";
-          groupChannel.sendUserMessage(messageParams, (message, error) => {
-            if (error) {
-              console.error("SendBird Message Sending Failed:", error);
-            } else {
-              console.log("Message sent successfully:", message);
-            }
+          
+          axios.post(`https://api-${APP_ID}.sendbird.com/v3/group_channels/${groupChannel.url}/messages`, {
+            message_type: "MESG",
+            user_id: OTHER_USER_ID,
+            message: "Welcome to CLR"
+        }, {
+          headers: {
+            'Api-Token': 'c135512119ebf24c5d4caa08acc635e57078ec1f',
+          },
+        })
+          .then(response => {
+            console.log('Success:', response.data);
+          })
+          .catch(error => {
+            console.error('Error:', error.message);
           });
+
         }
       });
     });
+  } else if( userId == "656f279d8117da0d8b51e41b"){
+    console.log('admin');
+  }
+} 
   };
 
     // Create channel on component mount
@@ -102,24 +119,32 @@ function App() {
       createSendbirdChannel();
     }, [userId]);
 
-  const categories = ['Power Tools', 'PPE', 'Welding Machine'];
+  const categories = ['Power Tools', 'PPE', 'Welding Machine', 'Test'];
 
   return (
     <>
     <Router>
       <div>
         <Routes>
-          <Route  path="/" element={categories.map((category) => (
-        <ProductList key={category} category={category} userId={userId}/> ))} />
+          <Route  path="/" element={
+          <>
+            {categories.map((category) => (
+              <ProductList key={category} category={category} userId={userId} />
+            ))}
+            <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} />
+          </>
+        } />
           
 
-          <Route path="/product/:productName" element={<ProductDetail userId={userId}/>} />
-          <Route path='/cart' element={<Cart userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel} sb={sb}/> }/>
-          <Route path='/login' element={<Cart userId={userId}/>}/>
-          <Route path='/checkout' element={<Checkout userId={userId}/>}/>
-          <Route path='/orders' element={<Orders userId={userId}/>}/>
+          <Route path="/product/:productName" element={<><ProductDetail userId={userId}/> <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} sb={sb} /></>} />
+          <Route path='/cart' element={<><Cart userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel} sb={sb}/><Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} />  </>}/>
+          <Route path='/login' element={<><Cart userId={userId}/><Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} /> </>}/>
+          <Route path='/checkout' element={<><Checkout userId={userId}/><Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} /> </>}/>
+          <Route path='/orders' element={<><Orders userId={userId}/><Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} /> </>}/>
+          <Route path='/ChatAdmin' element={<><ChatAdmin userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel}/></>}/>
+          <Route path='/Admin-Dashboard' element={<ProductForm userId={userId}/>}/>
         </Routes>
-        {!isInAdminPanel && <Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} />}      </div>
+    </div>
     </Router>
     </>
   );

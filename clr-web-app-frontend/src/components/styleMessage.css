@@ -5,17 +5,21 @@
     margin: 10px;
     display: block;
   }
-  .sendbird-app__channellist-wrap{
+  .Message:not(.admin-user)  .sendbird-app__channellist-wrap{
     display: none !important;
   }
-  .sendbird-chat-header .sendbird-chat-header__right__info {
+  .Message:not(.admin-user) .sendbird-chat-header .sendbird-chat-header__right__info {
     display: none !important;
   }
-  .sendbird-conversation{
+  .Message:not(.admin-user) .sendbird-conversation{
     height: 70vh !important;
     width: 500px !important;
   }
 
+  .admin-user .sendbird-app__wrap{
+    height: 80vh !important;
+    margin-top: 30px;
+  }
 
   .sendbird-conversation__messages .sendbird-conversation__messages-padding {
     overflow-x: hidden !important;

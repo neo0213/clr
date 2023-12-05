@@ -96,7 +96,7 @@ const Checkout = ({ userId }) => {
       const requestBody = {
         cart: uniqueProductIds,
         quantity: uniqueProductIds.map(id => response.data.cart[id]),
-        location: location,
+        province: location,
       };
   
       // Make the API call with the updated request body
@@ -177,32 +177,32 @@ const Checkout = ({ userId }) => {
         audience: configData.audience,
         scope: configData.scope,
       });
-
+  
       setAccessToken(token);
-
+      
       const provinceName = provinceList.find(province => province.province_code === selectedProvince)?.province_name;
+      
       const requestBody = {
-        cart: Object.keys(cartData.cart),
+        productsToAdd: Object.keys(cartData.cart),
         quantity: Object.values(cartData.cart),
-        location: provinceName, 
-        address: document.getElementsByName('address')[0].value, 
+        address: document.getElementsByName('address')[0].value,
+        contact: document.getElementsByName('contactno')[0].value,  // Replace "contactno" with the actual contact number
+        province: provinceName,
       };
-
+  
       // Make the API call to initiate the checkout
-      const checkoutResponse = await axios.post(`http://localhost:8080/api/v1/cart/checkout/${userId}`, requestBody, {
+      const checkoutResponse = await axios.post(`http://localhost:8080/api/v1/checkout/${userId}`, requestBody, {
         headers: {
           "Content-Type": "application/json",
           'Authorization': `Bearer ${token}`
         }
       });
-
-
+  
       console.log('Checkout Response:', checkoutResponse.data);
-
+  
       if (checkoutResponse.status === 200) {
         const productsToRemove = Object.keys(cartData.cart).map((item) => item);
   
-
         await axios.post(`http://localhost:8080/api/v1/cart/${userId}`, {
           productsToRemove: productsToRemove,
         }, {
@@ -211,7 +211,7 @@ const Checkout = ({ userId }) => {
             'Authorization': `Bearer ${token}`,
           },
         });
-
+  
         setProducts((prevProducts) => prevProducts.filter((product) => !productsToRemove.includes(product.id)));
         location.href = '/';
       }
@@ -219,6 +219,7 @@ const Checkout = ({ userId }) => {
       console.error('Error during checkout: ', error);
     }
   };
+  
 
   return (
     <div>
@@ -339,27 +340,29 @@ const Checkout = ({ userId }) => {
         <label htmlFor="address" className='me-2'>Address: </label>
         <input className="input-checkout" type="text" name='address'/>
     </div>
+
+    <div className='d-flex mt-3 align-items-center'>
+        <label htmlFor="contactno" className='me-2'>Contact no: </label>
+        <input className="input-checkout" type="number" name='contactno'/>
+    </div>
         
     {apiResponse && (
       <>
           <div className='mt-5 d-flex justify-content-between align-items-center'>
-            <div>
-              <p>Location: {apiResponse.location}</p>
-            </div>
 
-            <div className='mt-3 me-4 w-25'>
+            <div className='mt-3 me-4 w-25 ms-auto'>
               <div className='d-flex justify-content-between'>       
                 <p>Subtotal Price: </p> 
                 <p> ₱{apiResponse.totalPrice}</p>
               </div>
               <div className='d-flex justify-content-between'> 
               <p>Delivery Fee:</p>
-              <p> ₱{apiResponse.deliveryFee}</p>
+              <p> ₱{apiResponse.shippingFee}</p>
               </div>
 
               <div className='d-flex justify-content-between'> 
               <p>Total Price:</p>
-              <p> ₱{apiResponse.deliveryFee + apiResponse.totalPrice}</p>
+              <p> ₱{apiResponse.shippingFee + apiResponse.totalPrice}</p>
               </div>
 
             </div>

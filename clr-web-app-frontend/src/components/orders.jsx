@@ -1,22 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
+import { Dropdown } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { Token } from '../Token.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
-import  configData from '../config.json';
+import configData from '../config.json';
 
-
-const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
-
-function Orders({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
+const Orders = ({ userId }) => {
   const [products, setProducts] = useState([]);
   let { accessToken, setAccessToken } = useContext(Token);
   const [quoteMessage, setQuoteMessage] = useState("");
-  const [cartData, setCartData] = useState({
-    cart: {},
-    pending: [],
-    checkout: {}
-  });
 
   const {
     error,
@@ -26,6 +19,12 @@ function Orders({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
     loginWithRedirect,
     logout,
   } = useAuth0(); 
+
+  const [cartData, setCartData] = useState({
+    cart: {},
+    pending: [],
+    checkout: {},
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +37,7 @@ function Orders({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
         setAccessToken(token);
 
         const response = await axios.post('http://localhost:8080/api/v1/user', {
-          "userId": userId
+          userId: userId,
         }, {
           headers: {
             "Content-Type": "application/json",
@@ -47,17 +46,6 @@ function Orders({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
         });
 
         setCartData(response.data);
-
-        const prodInfo = response.data.checkout.items.map(item => {
-          return item.product;
-        });
-
-        const orderedProds = Object.entries(response.data.checkout.items);
-        console.log("Ordered Products:", orderedProds);
-
-        setProducts(prodInfo);
-
-        
       } catch (error) {
         console.log('Error fetching data: ', error);
       }
@@ -66,7 +54,7 @@ function Orders({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
     fetchData();
   }, [getAccessTokenSilently, setAccessToken, userId]);
 
-  
+
   if (error) {
     return <div>Oops... {error.message}</div>;
   }
@@ -82,27 +70,74 @@ function Orders({ userId, channelUrl, setChannelUrl, groupChannel, sb }) {
   if (!isAuthenticated) {
     return loginWithRedirect();
   } 
-  
 
   
+  const renderOrderDetails = (order) => {
+    return (
+      <div key={order.orderId} className="mt-3">
+        <div>
+          <strong>Order ID:</strong> {order.orderId}
+        </div>
+        <div>
+          <strong>Created At:</strong> {order.createdAt}
+        </div>
+        <div>
+          <strong>Address:</strong> {order.address}
+        </div>
+        <div>
+          <strong>Shipping Fee:</strong> ₱{order.shippingFee}
+        </div>
+        <div>
+          <strong>Total Price:</strong> ₱{order.totalPrice}
+        </div>
+        <div className="mt-2">
+          <strong>Items:</strong>
+          {order.items.map(item => (
+            <div key={item.product.id} className="row">
+              <span className='text-wrap col-4 my-2'>{item.product.prodName}</span>
+              <span className='text-wrap col-4 my-2'>Quantity: {item.quantity}</span>
+              <span className='text-wrap col-4 my-2'>Price: ₱{item.price}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <>
+    <div>
       <h1 className='text-start mt-5'>My Orders</h1>
       <div className='list-group mt-4'>
-        {products ? products.map((order) => (
-          <a href={'/product/'+order.prodName} className='list-group-item list-group-item-action d-flex flex-start align-items-center'>
-            <img className='me-5' src={order.img} alt={order.prodName} style={{ maxWidth: '100px' }} />
-            <span className=''>{order.prodName}</span>
+        {Object.values(cartData.pending).map((order) => (
+          <Dropdown key={order.orderId} className='list-group-item list-group-item-action d-flex flex-start align-items-center'>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              {order.orderId} - {order.createdAt}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>{renderOrderDetails(order)}</Dropdown.Item>
+            </Dropdown.Menu>
             <div className='ms-auto'>
-            Processing
+              <span>Processing</span>
             </div>
-          </a>
-        )) : 'You have empty cart' }
+          </Dropdown>
+        ))}
+        {Object.values(cartData.checkout).map((order) => (
+          <Dropdown key={order.orderId} className='list-group-item list-group-item-action d-flex flex-start align-items-center'>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              {order.orderId} - {order.createdAt}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>{renderOrderDetails(order)}</Dropdown.Item>
+            </Dropdown.Menu>
+            <div className='ms-auto'>
+              <span>Approved</span>
+            </div>
+          </Dropdown>
+        ))}
+        {(!Object.values(cartData.pending).length && !Object.values(cartData.checkout).length) && 'You have no orders'}
       </div>
-
-    </>
+    </div>
   );
-}
+};
 
 export default Orders;
