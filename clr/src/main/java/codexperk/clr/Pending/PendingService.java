@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,5 +101,30 @@ public class PendingService {
                     0;
             default -> 280;
         };
+    }
+    public User approve(String orderId) {
+        User updatedUser = null;
+        Optional<User> userOptional = userRepository.findByOrderIdInPending(orderId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            Pending orderToCheckout = null;
+            List<Pending> pendingOrders = user.getPending();
+
+            for (Pending order : pendingOrders) {
+                if (order.getOrderId().equals(orderId)) {
+                    orderToCheckout = order;
+                    break;
+                }
+            }
+
+            if (orderToCheckout != null) {
+                pendingOrders.remove(orderToCheckout);
+                user.getCheckout().add(orderToCheckout);
+                updatedUser = userRepository.save(user);
+            }
+        }
+        return updatedUser;
     }
 }

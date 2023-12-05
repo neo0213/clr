@@ -19,4 +19,8 @@ public class PendingController {
     public User checkout(@PathVariable String userId, @RequestBody PendingRequest pendingRequest){
         return pendingService.checkout(userId, pendingRequest);
     }
+    @PostMapping("/approve")
+    public User approve(@RequestParam String orderId){
+        return pendingService.approve(orderId);
+    }
 }

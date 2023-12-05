@@ -1,6 +1,5 @@
 package codexperk.clr.Pending;
 
-import codexperk.clr.Pending.PendingItem;
 import lombok.*;
 
 import java.util.List;

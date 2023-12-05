@@ -1,8 +1,5 @@
 package codexperk.clr.Cart;
 
-import codexperk.clr.Checkout.Checkout;
-import codexperk.clr.Checkout.CheckoutItem;
-import codexperk.clr.Pending.Pending;
 import codexperk.clr.Pending.PendingItem;
 import codexperk.clr.Pending.PendingService;
 import codexperk.clr.Product.Product;

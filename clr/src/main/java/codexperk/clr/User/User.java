@@ -1,6 +1,5 @@
 package codexperk.clr.User;
 
-import codexperk.clr.Checkout.Checkout;
 import codexperk.clr.Pending.Pending;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -24,7 +23,7 @@ public class User {
     private ObjectId id;
     private String userId;
     private Map<String, Integer> cart;
-    private List<Checkout> checkout;
+    private List<Pending> checkout;
     private List<Pending> pending;
 
     public User(String userId) {

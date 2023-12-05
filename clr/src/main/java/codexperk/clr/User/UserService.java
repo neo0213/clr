@@ -23,6 +23,9 @@ public class UserService {
         return userRepository.findByUserId(userId);
     }
     public User saveUser(User user) {
+        if (user == null){
+            return null;
+        }
         User existingUser = userRepository.findByUserId(user.getUserId());
         if (existingUser == null) {
             user.setUserId(user.getUserId());
