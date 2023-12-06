@@ -5,15 +5,15 @@
     margin: 10px;
     display: block;
   }
-  .Message:not(.admin-user)  .sendbird-app__channellist-wrap{
-    display: none !important;
+ .sendbird-app__channellist-wrap{
+    display: none;
   }
-  .Message:not(.admin-user) .sendbird-chat-header .sendbird-chat-header__right__info {
-    display: none !important;
+ .sendbird-chat-header .sendbird-chat-header__right__info {
+    display: none;
   }
-  .Message:not(.admin-user) .sendbird-conversation{
-    height: 70vh !important;
-    width: 500px !important;
+ .sendbird-conversation{
+    height: 70vh ;
+    width: 500px ;
   }
 
   .admin-user .sendbird-app__wrap{
@@ -21,7 +21,14 @@
     margin-top: 30px;
   }
 
-  .sendbird-conversation__messages .sendbird-conversation__messages-padding {
+  .admin-user .sendbird-app__channellist-wrap{
+    display: block !important;
+  }
+  .admin-user .sendbird-chat-header .sendbird-chat-header__right__info {
+    display: block !important;
+  }
+
+ .sendbird-conversation__messages .sendbird-conversation__messages-padding {
     overflow-x: hidden !important;
   }
 

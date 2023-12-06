@@ -77,9 +77,7 @@ const Checkout = ({ userId }) => {
   
       setAccessToken(token);
   
-      const response = await axios.post('http://localhost:8080/api/v1/user', {
-        "userId": userId
-      }, {
+      const response = await axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
         headers: {
           "Content-Type": "application/json",
           'Authorization': `Bearer ${token}`
@@ -138,9 +136,7 @@ const Checkout = ({ userId }) => {
 
         setAccessToken(token);
 
-        const response = await axios.post('http://localhost:8080/api/v1/user', {
-          "userId": userId
-        }, {
+        const response = await axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${token}`

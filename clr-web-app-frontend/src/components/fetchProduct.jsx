@@ -6,7 +6,7 @@ import { Token } from '../Token.jsx';
 import { useAuth0 } from "@auth0/auth0-react";
 import configData from '../config.json';
 
-const Orders = ({ userId }) => {
+const FetchProductAdmin = ({ userId }) => {
   const [products, setProducts] = useState([]);
   let { accessToken, setAccessToken } = useContext(Token);
 
@@ -109,7 +109,7 @@ const Orders = ({ userId }) => {
 
   return (
     <div>
-      <h1 className='text-start mt-5'>My Orders</h1>
+      <h1 className='text-start mt-5'>User Orders</h1>
       <div className='list-group mt-4'>
         {console.log(cartData)}
         {Object.values(cartData.pending).map((order) => (
@@ -121,7 +121,6 @@ const Orders = ({ userId }) => {
               <Dropdown.Item>{renderOrderDetails(order)}</Dropdown.Item>
             </Dropdown.Menu>
             <div className='ms-auto'>
-              <span>Waiting for Call</span>
             </div>
           </Dropdown>
         ))}
@@ -134,7 +133,6 @@ const Orders = ({ userId }) => {
               <Dropdown.Item>{renderOrderDetails(order)}</Dropdown.Item>
             </Dropdown.Menu>
             <div className='ms-auto'>
-              <span>Approved</span>
             </div>
           </Dropdown>
         ))}
@@ -144,4 +142,4 @@ const Orders = ({ userId }) => {
   );
 };
 
-export default Orders;
+export default FetchProductAdmin;

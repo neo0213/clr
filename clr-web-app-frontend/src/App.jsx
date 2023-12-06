@@ -17,7 +17,7 @@ import SendBird from "sendbird";
 import "sendbird-uikit/dist/index.css";
 import ChatAdmin from './components/ChatAdmin.jsx';
 import ProductForm from './components/AdminDashboard.jsx';
-
+import FetchProductAdmin from './components/fetchProduct.jsx';
 const APP_ID = "FAF0A502-9C9E-47EB-94B2-4279F4AEFB7E";
 const OTHER_USER_ID = "sendbird_desk_agent_id_49a13fd6-71e5-47dc-be34-831c27aba421";
 
@@ -109,7 +109,7 @@ function App() {
       });
     });
   } else if( userId == "656f279d8117da0d8b51e41b"){
-    console.log('admin');
+
   }
 } 
   };
@@ -119,7 +119,30 @@ function App() {
       createSendbirdChannel();
     }, [userId]);
 
-  const categories = ['Power Tools', 'PPE', 'Welding Machine', 'Test'];
+  const categories = ['Power Tools', 'PPE', 'Welding Machine', 'Belt Driven Air Compressor', 'Oilless Air Compressor'];
+
+  const [activeTab, setActiveTab] = useState('tab1');
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+  const Tab1Content = () => (
+    <div>
+            <ProductForm userId={userId}/>
+    </div>
+  );
+  
+  const Tab2Content = () => (
+    <div>
+      <ChatAdmin/>
+    </div>
+  );
+
+  const Tab3Content = () => (
+    <div>
+      <FetchProductAdmin userId={'106571512188032008215'}/>
+    </div>
+  );
 
   return (
     <>
@@ -142,7 +165,24 @@ function App() {
           <Route path='/checkout' element={<><Checkout userId={userId}/><Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} /> </>}/>
           <Route path='/orders' element={<><Orders userId={userId}/><Message userId={userId} setChannelUrl={setChannelUrl} channelUrl={channelUrl} /> </>}/>
           <Route path='/ChatAdmin' element={<><ChatAdmin userId={userId} channelUrl={channelUrl} setChannelUrl={setChannelUrl} groupChannel={groupChannel}/></>}/>
-          <Route path='/Admin-Dashboard' element={<ProductForm userId={userId}/>}/>
+          <Route path='/user-orders' element={<FetchProductAdmin userId={userId}/>}/>
+          <Route path='/Admin-Dashboard' element={
+            <div>
+            <div>
+              <button className='me-2' onClick={() => handleTabClick('tab1')}>Add Products</button>
+              <button className='me-2' onClick={() => handleTabClick('tab2')}>Chat</button>
+              <button className='me-2' onClick={() => handleTabClick('tab3')}>Orders</button>
+            </div>
+      
+            <div>
+              {activeTab === 'tab1' && <Tab1Content />}
+              {activeTab === 'tab2' && <Tab2Content />}
+              {activeTab === 'tab3' && <Tab3Content />}
+            </div>
+          </div>
+          
+          
+          }/>
         </Routes>
     </div>
     </Router>
